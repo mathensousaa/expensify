@@ -1,7 +1,7 @@
 import flet as ft
 
 
-def main_view():
+def main_view(page: ft.Page):
     return ft.Column(
         [
             ft.Text("Expensify - Gerenciador de Gastos"),

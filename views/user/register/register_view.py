@@ -4,9 +4,6 @@ from . import styles
 
 
 def register_view(page: ft.Page):
-    page.title = "Registrar"
-    page.clean()
-
     logo = logo_container()
 
     register_title = ft.Text(
@@ -51,4 +48,4 @@ def register_view(page: ft.Page):
         border_radius=styles.container_border_radius,
     )
 
-    page.add(logo, login_form_container)
+    return ft.View("/", [logo, login_form_container])
