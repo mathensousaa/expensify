@@ -6,8 +6,13 @@ from views.user.register.register_view import register_view
 
 
 def main(page: ft.Page):
+    page.fonts = {"Ubuntu": "/fonts/Ubuntu-Regular.ttf"}
+    page.theme = ft.Theme(font_family="Ubuntu")
+    page.theme_mode = ft.ThemeMode.DARK
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.title = "Expensify"
-    register_view(page)
+
     init_db()
 
     def route_change(route):
