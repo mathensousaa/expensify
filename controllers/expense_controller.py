@@ -11,11 +11,13 @@ def add_expense(description, amount, date):
     db.close()
     return expense
 
+
 def get_expenses_by_date(date):
     db = SessionLocal()
     expenses = db.query(Expense).filter(Expense.date == date).all()
     db.close()
     return expenses
+
 
 def update_expense(expense_id, description=None, amount=None, date=None):
     db = SessionLocal()
@@ -29,11 +31,12 @@ def update_expense(expense_id, description=None, amount=None, date=None):
         expense.amount = amount
     if date:
         expense.date = date
-    
+
     db.commit()
     db.refresh(expense)
     db.close()
     return expense
+
 
 def delete_expense(expense_id):
     db = SessionLocal()
@@ -46,9 +49,9 @@ def delete_expense(expense_id):
     db.close()
     return expense_id
 
+
 def get_all_expenses():
     db = SessionLocal()
     expenses = db.query(Expense).all()
     db.close()
     return expenses
-
