@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy.orm import relationship
 from models import Base
 
 
@@ -12,3 +13,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     phone_number = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
+
+    expenses = relationship(
+        "Expense", back_populates="user", cascade="all, delete-orphan"
+    )

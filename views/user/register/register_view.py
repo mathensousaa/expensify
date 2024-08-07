@@ -39,7 +39,13 @@ def register_view(page: ft.Page):
         spacing=32,
     )
 
-    login_form_column = ft.Column([register_title, login_form], spacing=32)
+    login_form_column = ft.Column(
+        [register_title, login_form],
+        spacing=32,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        alignment=ft.MainAxisAlignment.CENTER,
+        expand=True,
+    )
     login_form_container = ft.Container(
         content=login_form_column,
         padding=styles.container_padding,
