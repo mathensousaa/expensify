@@ -29,6 +29,8 @@ def all_expenses_view(page: ft.Page):
         ft.Card(
             content=ft.Container(
                 width=500,
+                bgcolor="#022c22",
+                border_radius=8,
                 content=ft.Column(
                     [
                         ft.ListTile(
@@ -37,7 +39,7 @@ def all_expenses_view(page: ft.Page):
                                 f"Valor: R${expense.amount} - Data: {expense.date.strftime('%d/%m/%Y')}"
                             ),
                             trailing=ft.Container(
-                                width=100,  
+                                width=100,
                                 padding=ft.padding.all(0),
                                 content=ft.Row(
                                     controls=[
@@ -54,8 +56,8 @@ def all_expenses_view(page: ft.Page):
                                             ),
                                         ),
                                     ],
-                                    alignment=ft.MainAxisAlignment.END, 
-                                    spacing=10, 
+                                    alignment=ft.MainAxisAlignment.END,
+                                    spacing=10,
                                 ),
                             ),
                         )
@@ -63,7 +65,7 @@ def all_expenses_view(page: ft.Page):
                     spacing=0,
                 ),
                 padding=ft.padding.symmetric(vertical=10),
-            )
+            ),
         )
         for expense in expenses
     ]
@@ -76,7 +78,12 @@ def all_expenses_view(page: ft.Page):
         "/",
         [
             ft.AppBar(title=ft.Text("Expensify - Gerenciador de Gastos")),
-            ft.ElevatedButton("Adicionar Despesa", on_click=on_add_expense_click),
+            ft.ElevatedButton(
+                "Adicionar Despesa",
+                on_click=on_add_expense_click,
+                bgcolor="#10b981",
+                color="#fafafa",
+            ),
             ft.Container(
                 content=ft.Column(
                     controls=expense_items,
