@@ -5,6 +5,7 @@ from . import styles
 
 
 def home_view(page: ft.Page):
+
     def on_add_expense_click(e):
         page.views.append(add_expense_view(page))
         page.update()
