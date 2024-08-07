@@ -47,7 +47,7 @@ Expensify é uma aplicação de gerenciamento de gastos desenvolvida utilizando 
 
 4. Execute a aplicação:
     ```sh
-    flet run main.py
+    flet run
     ```
 
 ## Uso
