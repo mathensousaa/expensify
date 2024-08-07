@@ -1,12 +1,32 @@
 import flet as ft
 from . import styles
 
+import flet as ft
+from . import styles
+
+
+class CustomElevatedButton(ft.ElevatedButton):
+    def __init__(self, text, bgcolor, **kwargs):
+        super().__init__(
+            content=ft.Container(
+                content=ft.Text(
+                    text,
+                    style=styles.button_text_style,
+                ),
+                padding=styles.button_padding,
+            ),
+            bgcolor=bgcolor,
+            width=1080,
+            **kwargs
+        )
+
 
 def logo_container():
     horizontal_logo = ft.Image(src="/images/logo_horizontal.png", height=60)
     welcome_text = ft.Text(
         "Bem-vindo ao Expensify! Cadastre-se e simplifique sua vida financeira.",
         style=styles.welcome_text_style,
+        text_align=ft.TextAlign.CENTER,
     )
 
     return ft.Container(
@@ -17,22 +37,12 @@ def logo_container():
             spacing=24,
         ),
         padding=styles.logo_padding,
-        expand=True,
+        expand=1,
     )
 
 
-def register_button(text, bgcolor):
-    return ft.ElevatedButton(
-        content=ft.Container(
-            content=ft.Text(
-                text,
-                style=styles.button_text_style,
-            ),
-            padding=styles.button_padding,
-        ),
-        bgcolor=bgcolor,
-        width=1080,
-    )
+def register_button(text, bgcolor, **kwargs):
+    return CustomElevatedButton(text, bgcolor, **kwargs)
 
 
 def login_button():

@@ -17,5 +17,5 @@ def init_db():
 
     # Populando o banco de dados com dados fictícios
     db = SessionLocal()
-    populate_db(db)
+    # populate_db(db)
     db.close()

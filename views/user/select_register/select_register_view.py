@@ -3,19 +3,32 @@ from .components import logo_container, register_button, login_button
 from . import styles
 
 
-def register_view(page: ft.Page):
+def select_register_view(page: ft.Page):
     logo = logo_container()
 
     register_title = ft.Text(
         "Faça seu cadastro para começar", style=styles.register_title_style
     )
 
+    def on_email_click(e):
+        page.go("/register_with_email")
+
     register_options = ft.Column(
         [
-            register_button("Continuar com o Google", styles.button_bgcolor),
-            register_button("Continuar com o Facebook", styles.button_bgcolor),
-            register_button("Continuar com a Apple", styles.button_bgcolor),
-            register_button("Continuar com E-mail", styles.email_button_bgcolor),
+            register_button(
+                "Continuar com o Google", styles.button_bgcolor, disabled=True
+            ),
+            register_button(
+                "Continuar com o Facebook", styles.button_bgcolor, disabled=True
+            ),
+            register_button(
+                "Continuar com a Apple", styles.button_bgcolor, disabled=True
+            ),
+            register_button(
+                "Continuar com E-mail",
+                styles.email_button_bgcolor,
+                on_click=on_email_click,
+            ),
         ]
     )
 
@@ -54,4 +67,4 @@ def register_view(page: ft.Page):
         border_radius=styles.container_border_radius,
     )
 
-    return ft.View("/page3", [logo, login_form_container])
+    return ft.View("/select_register", [logo, login_form_container])
