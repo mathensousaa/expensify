@@ -8,9 +8,6 @@ from controllers.expense_controller import (
 )
 
 
-<<<<<<< HEAD
-def home_view(page: ft.Page):
-=======
 def all_expenses_view(page: ft.Page):
     expenses = get_all_expenses()
 
@@ -40,7 +37,7 @@ def all_expenses_view(page: ft.Page):
                                 f"Valor: R${expense.amount} - Data: {expense.date.strftime('%d/%m/%Y')}"
                             ),
                             trailing=ft.Container(
-                                width=100,  
+                                width=100,
                                 padding=ft.padding.all(0),
                                 content=ft.Row(
                                     controls=[
@@ -57,8 +54,8 @@ def all_expenses_view(page: ft.Page):
                                             ),
                                         ),
                                     ],
-                                    alignment=ft.MainAxisAlignment.END, 
-                                    spacing=10, 
+                                    alignment=ft.MainAxisAlignment.END,
+                                    spacing=10,
                                 ),
                             ),
                         )
@@ -70,7 +67,6 @@ def all_expenses_view(page: ft.Page):
         )
         for expense in expenses
     ]
->>>>>>> 38d4e101e645b397b90a79d766a97f51e1ccafd9
 
     def on_add_expense_click(e):
         page.views.append(add_expense_view(page, refresh_expenses))
