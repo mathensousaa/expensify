@@ -1,9 +1,10 @@
 import flet as ft
-from views.auth import login_view
+from views.auth.login import login_view
 from views.expenses import expense_view, home_view
 from views.user.select_register import select_register_view
 from views.user.register_with_email import register_with_email_view
 from database.db_session import init_db
+from session.session_manager import SessionManager
 
 
 def main(page: ft.Page):
@@ -18,20 +19,22 @@ def main(page: ft.Page):
 
     def route_change(route):
         page.views.clear()
-        if page.route == "/":
+        session = SessionManager.get_session(page)
+        if session and page.route == "/login":
+            page.go("/home")
+        elif page.route == "/home":
             page.views.append(home_view.all_expenses_view(page))
-        elif page.route == "/page2":
-            page.views.append(login_view(page))
-        elif page.route == "/page3":
-            page.views.append(home_view.all_expenses_view(page))
-        elif page.route == "/page4":
+        elif page.route == "/add_expense":
             page.views.append(home_view.add_expense_view(page))
-        elif page.route == "/page5":
-            page.views.append(expense_view(page))
+        elif page.route == "/edit_expense":
+            page.views.append(home_view.edit_expense_view(page))
         elif page.route == "/select_register":
-            page.views.append(select_register_view.select_register_view(page))
+            page.views.append(select_register_view(page))
         elif page.route == "/register_with_email":
-            page.views.append(register_with_email_view.register_with_email_view)
+            page.views.append(register_with_email_view(page))
+        elif page.route == "/login":
+            page.views.append(login_view(page))
+
         page.update()
 
     def view_pop(view):
@@ -42,7 +45,12 @@ def main(page: ft.Page):
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
-    page.go("/select_register")
+
+    session = SessionManager.get_session(page)
+    if session:
+        page.go("/home")
+    else:
+        page.go("/login")
 
 
 ft.app(target=main)

@@ -1,77 +1,66 @@
 import flet as ft
-from .components import (
+from views.auth.login.components import (
     logo_container,
-    login_button,
-    login_input,
-    forget_password_button,
-    register_button,
+    CustomElevatedButton,
+    success_banner,
 )
+from controllers.auth_controller import authenticate_user
 from . import styles
 
 
-def login_screen(page: ft.Page):
-    def go_to_register(e):
-        register_screen(page)
-
-    page.title = "Login"
-    page.clean()
-
+def login_view(page: ft.Page):
     logo = logo_container()
 
-    login_title = ft.Text("Faça seu login para começar", style=styles.login_title_style)
+    login_title = ft.Text("Login", style=styles.register_title_style)
 
-    email_input = login_input("E-mail ou número de telefone")
-    password_input = login_input("Senha", password=True)
-
-    password_container = ft.Container(
-        content=ft.Column(
-            [password_input, forget_password_button()],
-            horizontal_alignment=ft.CrossAxisAlignment.END,
-            spacing=4,
-        )
+    identifier_input = ft.TextField(
+        label="E-mail, Nome de Usuário ou Telefone", width=600
     )
+    password_input = ft.TextField(
+        label="Senha", password=True, can_reveal_password=True, width=600
+    )
+    error_text = ft.Text(value="", color="red")
 
-    submit_button = login_button("Login", styles.submit_button_bgcolor)
-    google_login = login_button("Continuar com o Google", styles.button_bgcolor)
-    facebook_login = login_button("Continuar com o Facebook", styles.button_bgcolor)
-    apple_login = login_button("Continuar com a Apple", styles.button_bgcolor)
+    def on_login_click(e):
+        identifier = identifier_input.value
+        password = password_input.value
 
-    divider = ft.Divider()
+        response = authenticate_user(page, identifier, password)
 
-    default_login_inputs = ft.Column([email_input, password_container])
+        if response["success"]:
 
-    others_login_inputs = ft.Column([google_login, facebook_login, apple_login])
+            def go_to_home():
+                page.go("/")
 
-    register_btn = register_button(go_to_register)
+            go_to_home()
+            page.update()
+        else:
+            error_text.value = response["message"]
+            page.update()
 
-    register_text_container = ft.Container(
-        content=ft.Column(
-            [register_btn],
-            width=1080,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        ),
-        alignment=ft.alignment.center,
-        width=1080,
+    login_btn = CustomElevatedButton(
+        "Login", styles.email_button_bgcolor, on_click=on_login_click
     )
 
     login_form = ft.Column(
         [
-            default_login_inputs,
-            submit_button,
-            divider,
-            others_login_inputs,
-            register_text_container,
+            identifier_input,
+            password_input,
+            error_text,
+            login_btn,
         ],
-        spacing=32,
+        spacing=16,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        alignment=ft.MainAxisAlignment.CENTER,
+        expand=True,
     )
 
-    login_form_column = ft.Column([login_title, login_form], spacing=32)
     login_form_container = ft.Container(
-        content=login_form_column,
+        content=login_form,
         padding=styles.container_padding,
         width=styles.container_width,
         bgcolor=styles.container_bgcolor,
         border_radius=styles.container_border_radius,
     )
 
-    page.add(logo, login_form_container)
+    return ft.View("/login", [logo, login_form_container])

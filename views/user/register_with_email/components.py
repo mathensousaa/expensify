@@ -40,3 +40,21 @@ def logo_container():
 
 def register_button(text, bgcolor, **kwargs):
     return CustomElevatedButton(text, bgcolor, **kwargs)
+
+
+def success_banner(page, message, action_text, action):
+    action_button_style = ft.ButtonStyle(color=ft.colors.BLUE)
+
+    banner = ft.Banner(
+        bgcolor=ft.colors.GREEN_100,
+        leading=ft.Icon(ft.icons.CHECK_CIRCLE, color=ft.colors.GREEN, size=40),
+        content=ft.Text(
+            value=message,
+            color=ft.colors.BLACK,
+        ),
+        actions=[
+            ft.TextButton(text=action_text, style=action_button_style, on_click=action),
+        ],
+    )
+
+    return banner

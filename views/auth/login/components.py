@@ -1,11 +1,29 @@
 import flet as ft
 from . import styles
 
+
+class CustomElevatedButton(ft.ElevatedButton):
+    def __init__(self, text, bgcolor, **kwargs):
+        super().__init__(
+            content=ft.Container(
+                content=ft.Text(
+                    text,
+                    style=styles.button_text_style,
+                ),
+                padding=styles.button_padding,
+            ),
+            bgcolor=bgcolor,
+            width=1080,
+            **kwargs
+        )
+
+
 def logo_container():
     horizontal_logo = ft.Image(src="/images/logo_horizontal.png", height=60)
     welcome_text = ft.Text(
-        "Bem vindo de volta!",
+        "Bem-vindo ao Expensify! Cadastre-se e simplifique sua vida financeira.",
         style=styles.welcome_text_style,
+        text_align=ft.TextAlign.CENTER,
     )
 
     return ft.Container(
@@ -15,60 +33,24 @@ def logo_container():
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=24,
         ),
+        padding=styles.logo_padding,
         expand=True,
     )
 
-def login_button(text, bgcolor):
-    return ft.ElevatedButton(
-        content=ft.Container(
-            content=ft.Text(
-                text,
-                style=styles.button_text_style,
-            ),
-            padding=styles.button_padding,
+
+def success_banner(page, message, action_text, action):
+    action_button_style = ft.ButtonStyle(color=ft.colors.BLUE)
+
+    banner = ft.Banner(
+        bgcolor=ft.colors.GREEN_100,
+        leading=ft.Icon(ft.icons.CHECK_CIRCLE, color=ft.colors.GREEN, size=40),
+        content=ft.Text(
+            value=message,
+            color=ft.colors.BLACK,
         ),
-        bgcolor=bgcolor,
-        width=1080,
+        actions=[
+            ft.TextButton(text=action_text, style=action_button_style, on_click=action),
+        ],
     )
 
-def login_input(hint_text, password=False):
-    return ft.TextField(
-        password=password,
-        can_reveal_password=password,
-        hint_text=hint_text,
-        hint_style=styles.input_hint_style,
-        filled=True,
-        fill_color=styles.button_bgcolor,
-        border_radius=ft.border_radius.all(16),
-        border_color=styles.button_bgcolor,
-        text_size=12,
-    )
-
-def forget_password_button():
-    return ft.TextButton(
-        content=ft.Container(
-            content=ft.Text(
-                "Esqueci a senha", color="#737373", weight=ft.FontWeight.NORMAL, size=12
-            ),
-        ),
-    )
-
-def register_button(go_to_register):
-    register_text = ft.Text(
-        "Não tem uma conta?", style=styles.register_text_style
-    )
-
-    register_text_highlight = ft.Text(
-        "Registre-se", style=styles.register_text_highlight_style
-    )
-
-    return ft.TextButton(
-        content=ft.Container(
-            content=ft.Row(
-                [register_text, register_text_highlight],
-                alignment=ft.MainAxisAlignment.CENTER,
-                wrap=True,
-            )
-        ),
-        on_click=go_to_register,
-    )
+    return banner

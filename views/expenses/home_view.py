@@ -77,9 +77,11 @@ def all_expenses_view(page: ft.Page):
         page.update()
 
     return ft.View(
-        "/",
+        "/home",
         [
-            ft.AppBar(title=ft.Text("Expensify - Gerenciador de Gastos"), bgcolor="#022c22"),
+            ft.AppBar(
+                title=ft.Text("Expensify - Gerenciador de Gastos"), bgcolor="#022c22"
+            ),
             ft.Column(
                 controls=[
                     ft.ElevatedButton(
@@ -140,7 +142,7 @@ def add_expense_view(page: ft.Page, on_success):
         page.go("/")
 
     return ft.View(
-        "/page4",
+        "/add_expense",
         [
             ft.AppBar(
                 title=ft.Text("Adicionar Despesa"),
@@ -163,6 +165,7 @@ def add_expense_view(page: ft.Page, on_success):
             ),
         ],
     )
+
 
 def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
     expense = next(
@@ -208,7 +211,7 @@ def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
             page.open(snack_bar)
 
     return ft.View(
-        "/page5",
+        "/edit_expense",
         [
             ft.AppBar(
                 title=ft.Text("Editar Despesa"),
