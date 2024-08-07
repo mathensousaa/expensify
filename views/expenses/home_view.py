@@ -7,21 +7,23 @@ from controllers.expense_controller import (
     delete_expense,
 )
 
+USER_ID = 1  # Define user_id as 1
+
 
 def all_expenses_view(page: ft.Page):
-    expenses = get_all_expenses()
+    expenses = get_all_expenses(USER_ID)
 
     def on_edit_expense_click(expense_id):
         page.views.append(edit_expense_view(page, expense_id, refresh_expenses))
         page.update()
 
     def on_delete_expense_click(expense_id):
-        delete_expense(expense_id)
+        delete_expense(expense_id, USER_ID)
         refresh_expenses()
 
     def refresh_expenses():
         nonlocal expenses
-        expenses = get_all_expenses()
+        expenses = get_all_expenses(USER_ID)
         page.views[-1] = all_expenses_view(page)
         page.update()
 
@@ -45,14 +47,14 @@ def all_expenses_view(page: ft.Page):
                                     controls=[
                                         ft.IconButton(
                                             icon=ft.icons.EDIT,
-                                            on_click=lambda e: on_edit_expense_click(
-                                                expense.id
+                                            on_click=lambda e, id=expense.id: on_edit_expense_click(
+                                                id
                                             ),
                                         ),
                                         ft.IconButton(
                                             icon=ft.icons.DELETE,
-                                            on_click=lambda e: on_delete_expense_click(
-                                                expense.id
+                                            on_click=lambda e, id=expense.id: on_delete_expense_click(
+                                                id
                                             ),
                                         ),
                                     ],
@@ -121,7 +123,7 @@ def add_expense_view(page: ft.Page, on_success):
             page.open(snack_bar)
             return
 
-        add_expense(description, amount, date)
+        add_expense(description, amount, date, USER_ID)
 
         description_input.value = ""
         amount_input.value = ""
@@ -144,7 +146,12 @@ def add_expense_view(page: ft.Page, on_success):
                     description_input,
                     amount_input,
                     date_input,
-                    ft.ElevatedButton("Salvar", on_click=on_save_click),
+                    ft.ElevatedButton(
+                        "Salvar",
+                        on_click=on_save_click,
+                        bgcolor="#10b981",
+                        color="fafafa",
+                    ),
                 ],
                 spacing=10,
                 expand=True,
@@ -154,7 +161,9 @@ def add_expense_view(page: ft.Page, on_success):
 
 
 def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
-    expense = next((exp for exp in get_all_expenses() if exp.id == expense_id), None)
+    expense = next(
+        (exp for exp in get_all_expenses(USER_ID) if exp.id == expense_id), None
+    )
     if not expense:
         return ft.View("/error", [ft.Text("Despesa não encontrada")])
 
@@ -185,7 +194,7 @@ def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
             page.open(snack_bar)
             return
 
-        updated_expense = update_expense(expense_id, description, amount, date)
+        updated_expense = update_expense(expense_id, USER_ID, description, amount, date)
         if updated_expense:
             page.views.pop()
             page.update()
