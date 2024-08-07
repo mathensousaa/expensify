@@ -48,4 +48,4 @@ def register_view(page: ft.Page):
         border_radius=styles.container_border_radius,
     )
 
-    return ft.View("/", [logo, login_form_container])
+    return ft.View("/page3", [logo, login_form_container])
