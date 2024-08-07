@@ -29,11 +29,11 @@ def main(page: ft.Page):
         elif page.route == "/edit_expense":
             page.views.append(home_view.edit_expense_view(page))
         elif page.route == "/select_register":
-            page.views.append(select_register_view(page))
+            page.views.append(select_register_view.select_register_view(page))
         elif page.route == "/register_with_email":
-            page.views.append(register_with_email_view(page))
+            page.views.append(register_with_email_view.register_button(page))
         elif page.route == "/login":
-            page.views.append(login_view(page))
+            page.views.append(login_view.login_view(page))
 
         page.update()
 

@@ -6,11 +6,20 @@ from controllers.expense_controller import (
     update_expense,
     delete_expense,
 )
+from .components import (
+    logo_Container,
+    expense_card,
+    add_expense_button,
+    save_button,
+    app_bar,
+)
+from . import styles
 
-USER_ID = 1  # Define user_id as 1
+USER_ID = 1
 
 
 def all_expenses_view(page: ft.Page):
+    logo = logo_Container()
     expenses = get_all_expenses(USER_ID)
 
     def on_edit_expense_click(expense_id):
@@ -28,47 +37,7 @@ def all_expenses_view(page: ft.Page):
         page.update()
 
     expense_items = [
-        ft.Card(
-            content=ft.Container(
-                width=500,
-                bgcolor="#022c22",
-                border_radius=8,
-                content=ft.Column(
-                    [
-                        ft.ListTile(
-                            title=ft.Text(expense.description),
-                            subtitle=ft.Text(
-                                f"Valor: R${expense.amount} - Data: {expense.date.strftime('%d/%m/%Y')}"
-                            ),
-                            trailing=ft.Container(
-                                width=100,
-                                padding=ft.padding.all(0),
-                                content=ft.Row(
-                                    controls=[
-                                        ft.IconButton(
-                                            icon=ft.icons.EDIT,
-                                            on_click=lambda e, id=expense.id: on_edit_expense_click(
-                                                id
-                                            ),
-                                        ),
-                                        ft.IconButton(
-                                            icon=ft.icons.DELETE,
-                                            on_click=lambda e, id=expense.id: on_delete_expense_click(
-                                                id
-                                            ),
-                                        ),
-                                    ],
-                                    alignment=ft.MainAxisAlignment.END,
-                                    spacing=10,
-                                ),
-                            ),
-                        )
-                    ],
-                    spacing=0,
-                ),
-                padding=ft.padding.symmetric(vertical=10),
-            ),
-        )
+        expense_card(expense, on_edit_expense_click, on_delete_expense_click)
         for expense in expenses
     ]
 
@@ -79,17 +48,10 @@ def all_expenses_view(page: ft.Page):
     return ft.View(
         "/home",
         [
-            ft.AppBar(
-                title=ft.Text("Expensify - Gerenciador de Gastos"), bgcolor="#022c22"
-            ),
+            app_bar("Expensify - Gerenciador de Gastos", logo),
             ft.Column(
                 controls=[
-                    ft.ElevatedButton(
-                        "Adicionar Despesa",
-                        on_click=on_add_expense_click,
-                        bgcolor="#10b981",
-                        color="#fafafa",
-                    ),
+                    add_expense_button(on_add_expense_click),
                     ft.Container(
                         content=ft.Column(
                             controls=expense_items,
@@ -144,21 +106,18 @@ def add_expense_view(page: ft.Page, on_success):
     return ft.View(
         "/add_expense",
         [
-            ft.AppBar(
-                title=ft.Text("Adicionar Despesa"),
-                leading=ft.IconButton(icon=ft.icons.ARROW_BACK, on_click=on_back_click),
+            app_bar(
+                "Adicionar Despesa",
+                leading_icon=ft.IconButton(
+                    icon=ft.icons.ARROW_BACK, on_click=on_back_click
+                ),
             ),
             ft.Column(
                 controls=[
                     description_input,
                     amount_input,
                     date_input,
-                    ft.ElevatedButton(
-                        "Salvar",
-                        on_click=on_save_click,
-                        bgcolor="#10b981",
-                        color="#fafafa",
-                    ),
+                    save_button(on_save_click),
                 ],
                 spacing=10,
                 expand=True,
@@ -213,16 +172,18 @@ def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
     return ft.View(
         "/edit_expense",
         [
-            ft.AppBar(
-                title=ft.Text("Editar Despesa"),
-                leading=ft.IconButton(icon=ft.icons.ARROW_BACK, on_click=on_back_click),
+            app_bar(
+                "Editar Despesa",
+                leading_icon=ft.IconButton(
+                    icon=ft.icons.ARROW_BACK, on_click=on_back_click
+                ),
             ),
             ft.Column(
                 controls=[
                     description_input,
                     amount_input,
                     date_input,
-                    ft.ElevatedButton("Salvar", on_click=on_save_click),
+                    save_button(on_save_click),
                 ],
                 spacing=10,
                 expand=True,
