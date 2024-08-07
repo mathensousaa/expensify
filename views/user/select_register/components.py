@@ -1,9 +1,6 @@
 import flet as ft
 from . import styles
 
-import flet as ft
-from . import styles
-
 
 class CustomElevatedButton(ft.ElevatedButton):
     def __init__(self, text, bgcolor, **kwargs):
@@ -45,7 +42,7 @@ def register_button(text, bgcolor, **kwargs):
     return CustomElevatedButton(text, bgcolor, **kwargs)
 
 
-def login_button():
+def login_button(action):
     login_text = ft.Text("Já tem uma conta?", style=styles.login_text_style)
     login_text_highlight = ft.Text("Logue-se", style=styles.login_text_highlight_style)
 
@@ -57,4 +54,5 @@ def login_button():
                 wrap=True,
             )
         ),
+        on_click=action,
     )

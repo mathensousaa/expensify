@@ -107,6 +107,7 @@ def register_with_email_view(page: ft.Page):
         if response["success"]:
 
             def go_to_login(e):
+                page.close(banner)
                 page.go("/login")
 
             success_msg = "Usuário registrado com sucesso!"
@@ -119,6 +120,9 @@ def register_with_email_view(page: ft.Page):
             else:
                 error_text.value = response["error"]
             page.update()
+
+    def on_back_click(e):
+        page.go("/select_register")
 
     register_btn = register_button(
         "Registrar", styles.email_button_bgcolor, on_click=on_register_click
@@ -154,4 +158,13 @@ def register_with_email_view(page: ft.Page):
         border_radius=styles.container_border_radius,
     )
 
-    return ft.View("/register_with_email", [logo, register_form_container])
+    app_bar = ft.AppBar(
+        title=ft.Text("Cadastro com E-mail"),
+        leading=ft.IconButton(
+            icon=ft.icons.ARROW_BACK,
+            on_click=on_back_click,
+        ),
+        bgcolor=styles.BACKGROUND_COLOR,
+    )
+
+    return ft.View("/register_with_email", [app_bar, logo, register_form_container])

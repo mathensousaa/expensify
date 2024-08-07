@@ -1,5 +1,11 @@
 import flet as ft
 
+BACKGROUND_COLOR = "#022c22"
+BUTTON_COLOR = "#10b981"
+BUTTON_TEXT_COLOR = "#fafafa"
+CARD_BG_COLOR = "#022c22"
+CARD_BORDER_RADIUS = 8
+
 # Text styles
 welcome_text_style = ft.TextStyle(size=16)
 button_text_style = ft.TextStyle(color="#FAFAFA", weight=ft.FontWeight.BOLD, size=12)

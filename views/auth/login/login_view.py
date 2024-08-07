@@ -30,7 +30,7 @@ def login_view(page: ft.Page):
         if response["success"]:
 
             def go_to_home():
-                page.go("/")
+                page.go("/home")
 
             go_to_home()
             page.update()
@@ -42,12 +42,48 @@ def login_view(page: ft.Page):
         "Login", styles.email_button_bgcolor, on_click=on_login_click
     )
 
+    divider = ft.Divider()
+
+    register_text = ft.Text(
+        "Não tem uma conta?", weight=ft.FontWeight.BOLD, color="#FFFFFF", size=12
+    )
+
+    register_text_highlight = ft.Text(
+        "Registre-se", weight=ft.FontWeight.BOLD, color="#6EE7B7", size=12
+    )
+
+    def go_to_register(e):
+        page.go("/select_register")
+
+    register_button = ft.TextButton(
+        content=ft.Container(
+            content=ft.Row(
+                [register_text, register_text_highlight],
+                alignment=ft.MainAxisAlignment.CENTER,
+                wrap=True,
+            )
+        ),
+        on_click=go_to_register,
+    )
+
+    register_text_container = ft.Container(
+        content=ft.Column(
+            [register_button],
+            width=1080,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        alignment=ft.alignment.center,
+        width=1080,
+    )
+
     login_form = ft.Column(
         [
             identifier_input,
             password_input,
             error_text,
             login_btn,
+            divider,
+            register_text_container,
         ],
         spacing=16,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,

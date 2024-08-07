@@ -6,33 +6,39 @@ from controllers.expense_controller import (
     update_expense,
     delete_expense,
 )
-from .components import (
-    logo_Container,
+from views.expenses.components import (
+    logo_container,
     expense_card,
     add_expense_button,
     save_button,
     app_bar,
 )
+from session.session_manager import SessionManager
 from . import styles
-
-USER_ID = 1
 
 
 def all_expenses_view(page: ft.Page):
-    logo = logo_Container()
-    expenses = get_all_expenses(USER_ID)
+    logo = logo_container()
+    session = SessionManager.get_session(page)
+    user_id = session.get("user_id") if session else None
+
+    if not user_id:
+        page.go("/login")
+        return
+
+    expenses = get_all_expenses(user_id)
 
     def on_edit_expense_click(expense_id):
         page.views.append(edit_expense_view(page, expense_id, refresh_expenses))
         page.update()
 
     def on_delete_expense_click(expense_id):
-        delete_expense(expense_id, USER_ID)
+        delete_expense(expense_id, user_id)
         refresh_expenses()
 
     def refresh_expenses():
         nonlocal expenses
-        expenses = get_all_expenses(USER_ID)
+        expenses = get_all_expenses(user_id)
         page.views[-1] = all_expenses_view(page)
         page.update()
 
@@ -48,7 +54,7 @@ def all_expenses_view(page: ft.Page):
     return ft.View(
         "/home",
         [
-            app_bar("Expensify - Gerenciador de Gastos", logo),
+            app_bar("Expensify", page, logo),
             ft.Column(
                 controls=[
                     add_expense_button(on_add_expense_click),
@@ -67,9 +73,33 @@ def all_expenses_view(page: ft.Page):
 
 
 def add_expense_view(page: ft.Page, on_success):
+    session = SessionManager.get_session(page)
+    user_id = session.get("user_id") if session else None
+
+    if not user_id:
+        page.go("/login")
+        return
+
     description_input = ft.TextField(label="Descrição")
     amount_input = ft.TextField(label="Valor", keyboard_type=ft.KeyboardType.NUMBER)
-    date_input = ft.TextField(label="Data", keyboard_type=ft.KeyboardType.DATETIME)
+    date_text = ft.Text(value="Data: (DD/MM/AAAA)", size=12)
+    date_picker = ft.ElevatedButton("Escolher Data", icon=ft.icons.CALENDAR_MONTH)
+
+    def handle_date_change(e):
+        date_text.value = f"Data: {e.control.value.strftime('%d/%m/%Y')}"
+        date_text.update()
+
+    def handle_date_dismiss(e):
+        page.add(ft.Text("DatePicker dismissed"))
+
+    date_picker.on_click = lambda e: page.open(
+        ft.DatePicker(
+            first_date=datetime(year=1900, month=1, day=1),
+            last_date=datetime(year=2024, month=12, day=31),
+            on_change=handle_date_change,
+            on_dismiss=handle_date_dismiss,
+        )
+    )
 
     def on_back_click(e):
         page.views.pop()
@@ -84,7 +114,7 @@ def add_expense_view(page: ft.Page, on_success):
             page.open(snack_bar)
             return
 
-        date_str = date_input.value
+        date_str = date_text.value.replace("Data: ", "")
         try:
             date = datetime.strptime(date_str, "%d/%m/%Y").date()
         except ValueError:
@@ -92,31 +122,34 @@ def add_expense_view(page: ft.Page, on_success):
             page.open(snack_bar)
             return
 
-        add_expense(description, amount, date, USER_ID)
+        add_expense(description, amount, date, user_id)
 
         description_input.value = ""
         amount_input.value = ""
-        date_input.value = ""
+        date_text.value = "Data: (DD/MM/AAAA)"
 
         page.views.pop()
         page.update()
         on_success()
-        page.go("/")
+        page.go("/home")
+
+    date_column = ft.Column([date_text, date_picker])
 
     return ft.View(
         "/add_expense",
         [
             app_bar(
                 "Adicionar Despesa",
+                page,
                 leading_icon=ft.IconButton(
-                    icon=ft.icons.ARROW_BACK, on_click=on_back_click
+                    icon=ft.icons.ARROW_BACK, on_click=on_back_click, tooltip="Sair"
                 ),
             ),
             ft.Column(
                 controls=[
                     description_input,
                     amount_input,
-                    date_input,
+                    date_column,
                     save_button(on_save_click),
                 ],
                 spacing=10,
@@ -127,8 +160,15 @@ def add_expense_view(page: ft.Page, on_success):
 
 
 def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
+    session = SessionManager.get_session(page)
+    user_id = session.get("user_id") if session else None
+
+    if not user_id:
+        page.go("/login")
+        return
+
     expense = next(
-        (exp for exp in get_all_expenses(USER_ID) if exp.id == expense_id), None
+        (exp for exp in get_all_expenses(user_id) if exp.id == expense_id), None
     )
     if not expense:
         return ft.View("/error", [ft.Text("Despesa não encontrada")])
@@ -137,7 +177,24 @@ def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
     amount_input = ft.TextField(
         label="Valor", value=str(expense.amount), keyboard_type=ft.KeyboardType.NUMBER
     )
-    date_input = ft.TextField(label="Data", value=expense.date.strftime("%d/%m/%Y"))
+    date_text = ft.Text(value=f"Data: {expense.date.strftime('%d/%m/%Y')}", size=12)
+    date_picker = ft.ElevatedButton("Escolher Data", icon=ft.icons.CALENDAR_MONTH)
+
+    def handle_date_change(e):
+        date_text.value = f"Data: {e.control.value.strftime('%d/%m/%Y')}"
+        date_text.update()
+
+    def handle_date_dismiss(e):
+        page.add(ft.Text("DatePicker dismissed"))
+
+    date_picker.on_click = lambda e: page.open(
+        ft.DatePicker(
+            first_date=datetime(year=1900, month=1, day=1),
+            last_date=datetime(year=2024, month=12, day=31),
+            on_change=handle_date_change,
+            on_dismiss=handle_date_dismiss,
+        )
+    )
 
     def on_back_click(e):
         page.views.pop()
@@ -152,7 +209,7 @@ def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
             page.open(snack_bar)
             return
 
-        date_str = date_input.value
+        date_str = date_text.value.replace("Data: ", "")
         try:
             date = datetime.strptime(date_str, "%d/%m/%Y").date()
         except ValueError:
@@ -160,7 +217,7 @@ def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
             page.open(snack_bar)
             return
 
-        updated_expense = update_expense(expense_id, USER_ID, description, amount, date)
+        updated_expense = update_expense(expense_id, user_id, description, amount, date)
         if updated_expense:
             page.views.pop()
             page.update()
@@ -169,11 +226,14 @@ def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
             snack_bar = ft.SnackBar(ft.Text("Erro ao atualizar despesa!"))
             page.open(snack_bar)
 
+    date_column = ft.Column([date_text, date_picker])
+
     return ft.View(
         "/edit_expense",
         [
             app_bar(
                 "Editar Despesa",
+                page,
                 leading_icon=ft.IconButton(
                     icon=ft.icons.ARROW_BACK, on_click=on_back_click
                 ),
@@ -182,7 +242,7 @@ def edit_expense_view(page: ft.Page, expense_id: int, on_save_success):
                 controls=[
                     description_input,
                     amount_input,
-                    date_input,
+                    date_column,
                     save_button(on_save_click),
                 ],
                 spacing=10,

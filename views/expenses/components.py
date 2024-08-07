@@ -1,8 +1,9 @@
 import flet as ft
 from . import styles
+from session.session_manager import SessionManager
 
 
-def logo_Container():
+def logo_container():
     logo_image_path = "assets/images/logo.png"  # Substitua pelo caminho real da imagem
     return ft.Container(
         content=ft.Image(src=logo_image_path, width=100, height=50),
@@ -67,9 +68,23 @@ def save_button(on_click):
     )
 
 
-def app_bar(title, leading_icon=None):
+def app_bar(title, page, leading_icon=None):
+    session = SessionManager.get_session(page)
+    username = session.get("username") if session else "Usuário"
+
+    def on_logout_click(e):
+        SessionManager.clear_session(page)
+        page.go("/login")
+
     return ft.AppBar(
         title=ft.Text(title),
         leading=leading_icon,
+        actions=[
+            ft.Text(username, style=ft.TextStyle(color=ft.colors.WHITE, size=16)),
+            ft.IconButton(
+                icon=ft.icons.LOGOUT,
+                on_click=on_logout_click,
+            ),
+        ],
         bgcolor=styles.BACKGROUND_COLOR,
     )

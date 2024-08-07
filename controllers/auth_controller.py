@@ -27,8 +27,8 @@ def authenticate_user(page: ft.Page, identifier, password):
         )
 
         if user and verify_password(password, user.hashed_password):
-            SessionManager.set_session(user.id, user.username)
-            session = SessionManager.get_session()
+            SessionManager.set_session(page, user.id, user.username)
+            session = SessionManager.get_session(page)
             return {
                 "success": True,
                 "message": "Logado com sucesso",

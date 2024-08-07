@@ -1,6 +1,6 @@
 import flet as ft
 from views.auth.login import login_view
-from views.expenses import expense_view, home_view
+from views.expenses import home_view
 from views.user.select_register import select_register_view
 from views.user.register_with_email import register_with_email_view
 from database.db_session import init_db
@@ -31,7 +31,7 @@ def main(page: ft.Page):
         elif page.route == "/select_register":
             page.views.append(select_register_view.select_register_view(page))
         elif page.route == "/register_with_email":
-            page.views.append(register_with_email_view.register_button(page))
+            page.views.append(register_with_email_view.register_with_email_view(page))
         elif page.route == "/login":
             page.views.append(login_view.login_view(page))
 
